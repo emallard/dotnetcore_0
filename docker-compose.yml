@@ -1,0 +1,4 @@
+entityframeworkapp:
+  image: entityframeworkapp
+  ports:
+    - "80:5000"
