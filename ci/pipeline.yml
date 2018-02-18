@@ -1,0 +1,37 @@
+# pipeline for dotnet-core-helloWorld app.
+
+groups:
+- name: dotnetcore_0
+  jobs:
+  - build-dotnetcore_0
+
+resources:
+- name: sources-dotnetcore_0
+  type: git
+  source:
+    uri: https://github.com/emallard/dotnetcore_0.git
+    branch: master
+
+
+- name: production-server-deploy
+  type: rsync-resource
+  source:
+    server: address
+    base_dir: /var/www/...
+    disable_version_path: true
+    private_key: {{production-server-key}}
+
+jobs:
+- name: build
+#  public: true
+#  serial: true
+  plan:
+  - get: sources-dotnetcore_0
+#    trigger: true
+  - task: build-and-pkg
+    file: sources-dotnetcore_0/ci/tasks/build.yml
+  - put: deploy-dev-env
+    params:
+      manifest: service-repo/manifest.yml
+- name: deploy
+ plan:
